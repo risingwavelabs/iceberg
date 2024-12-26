@@ -74,6 +74,7 @@ project(":iceberg-spark:iceberg-spark-${sparkMajorVersion}_${scalaVersion}") {
 
     implementation libs.parquet.column
     implementation libs.parquet.hadoop
+    implementation 'org.postgresql:postgresql:42.7.4'
 
     implementation("${libs.orc.core.get().module}:${libs.versions.orc.get()}:nohive") {
       exclude group: 'org.apache.hadoop'
@@ -185,6 +186,11 @@ project(":iceberg-spark:iceberg-spark-extensions-${sparkMajorVersion}_${scalaVer
 
 project(":iceberg-spark:iceberg-spark-runtime-${sparkMajorVersion}_${scalaVersion}") {
   apply plugin: 'com.github.johnrengelman.shadow'
+  apply plugin: 'application'
+
+  application {
+    mainClass = 'com.risingwave.iceberg.SparkIcebergCompaction'
+  }
 
   tasks.jar.dependsOn tasks.shadowJar
 
@@ -264,6 +270,7 @@ project(":iceberg-spark:iceberg-spark-runtime-${sparkMajorVersion}_${scalaVersio
     }
 
     // Relocate dependencies to avoid conflicts
+    relocate 'org.apache.iceberg', 'risingwave.shaded.org.apache.iceberg'
     relocate 'com.google.errorprone', 'org.apache.iceberg.shaded.com.google.errorprone'
     relocate 'com.google.flatbuffers', 'org.apache.iceberg.shaded.com.google.flatbuffers'
     relocate 'com.fasterxml', 'org.apache.iceberg.shaded.com.fasterxml'

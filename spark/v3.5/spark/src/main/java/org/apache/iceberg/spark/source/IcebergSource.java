@@ -77,7 +77,7 @@ public class IcebergSource implements DataSourceRegister, SupportsCatalogOptions
 
   @Override
   public String shortName() {
-    return "iceberg";
+    return "risingwave_iceberg";
   }
 
   @Override

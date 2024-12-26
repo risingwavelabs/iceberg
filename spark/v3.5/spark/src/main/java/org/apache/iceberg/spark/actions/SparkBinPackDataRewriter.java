@@ -45,7 +45,7 @@ class SparkBinPackDataRewriter extends SparkSizeBasedDataRewriter {
     Dataset<Row> scanDF =
         spark()
             .read()
-            .format("iceberg")
+            .format("risingwave_iceberg")
             .option(SparkReadOptions.SCAN_TASK_SET_ID, groupId)
             .option(SparkReadOptions.SPLIT_SIZE, splitSize(inputSize(group)))
             .option(SparkReadOptions.FILE_OPEN_COST, "0")
@@ -54,7 +54,7 @@ class SparkBinPackDataRewriter extends SparkSizeBasedDataRewriter {
     // write the packed data into new files where each split becomes a new file
     scanDF
         .write()
-        .format("iceberg")
+        .format("risingwave_iceberg")
         .option(SparkWriteOptions.REWRITTEN_FILE_SCAN_TASK_SET_ID, groupId)
         .option(SparkWriteOptions.TARGET_FILE_SIZE_BYTES, writeMaxFileSize())
         .option(SparkWriteOptions.DISTRIBUTION_MODE, distributionMode(group).modeName())
