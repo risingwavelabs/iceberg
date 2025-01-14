@@ -20,7 +20,21 @@ public class SparkIcebergCompaction {
             List<Row> expireSnapshotOutputRows = session.sql(String.format("CALL %s.system.expire_snapshots(table => '%s.%s')", catalog, database, table)).collectAsList();
             System.out.printf("expire_snapshots success: %s/%s, output: %s%n", database, table, expireSnapshotOutputRows);
         } catch (Throwable e) {
-            System.err.printf("failed to run expire snapshot: %s%n", e);
+            System.err.printf("failed to run expire snapshots: %s%n", e);
+        }
+
+        try {
+            List<Row> rewriteManifestsOutputRows = session.sql(String.format("CALL %s.system.rewrite_manifests(table => '%s.%s')", catalog, database, table)).collectAsList();
+            System.out.printf("rewrite_manifests success: %s/%s, output: %s%n", database, table, rewriteManifestsOutputRows);
+        } catch (Throwable e) {
+            System.err.printf("failed to run rewrite manifests: %s%n", e);
+        }
+
+        try {
+            List<Row> removeOrphanFilesOutputRows = session.sql(String.format("CALL %s.system.remove_orphan_files(table => '%s.%s')", catalog, database, table)).collectAsList();
+            System.out.printf("remove_orphan_files success: %s/%s, output: %s%n", database, table, removeOrphanFilesOutputRows);
+        } catch (Throwable e) {
+            System.err.printf("failed to run remove orphan files: %s%n", e);
         }
     }
 }
